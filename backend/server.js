@@ -4,19 +4,35 @@ import dotenv from "dotenv";
 import path from "path";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
-const app = express();
+import { connectDB } from "./lib/db.js";
+
 const  __dirname = path.resolve();
 
+
 dotenv.config();
-// app.listen(3000, () => console.log("server is running"));
-app.listen(3000, ()=>{
+const PORT = process.env.PORT || 3000;
+console.log("MONGO_URI:", process.env.MONGO_URI);
+console.log("NODE_ENV:", process.env.NODE_ENV);
+
+const app = express();
+app.use(express.json());
+
+connectDB();
+
+app.listen(3000, async ()=>{
     try{
         console.log('Server is running on port 3000');
+        console.log("Mongo URI:", process.env.MONGO_URI);
+    //    await connectDB();
+
     }
     catch(err){
         console.log(err,"error occured while running server");
     }
 });
+
+
+
 
 app.use('/api/auth', authRouter);
 app.use('/api/message', messageRouter);
@@ -29,3 +45,11 @@ if(process.env.NODE_ENV === "production"){
         res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
     });
 }
+
+
+
+
+
+
+
+
