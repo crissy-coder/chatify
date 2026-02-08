@@ -8,8 +8,8 @@ import { connectDB } from "./lib/db.js";
 
 const  __dirname = path.resolve();
 
-
 dotenv.config();
+
 const PORT = process.env.PORT || 3000;
 console.log("MONGO_URI:", process.env.MONGO_URI);
 console.log("NODE_ENV:", process.env.NODE_ENV);
@@ -17,19 +17,9 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 const app = express();
 app.use(express.json());
 
-connectDB();
+// connectDB();
 
-app.listen(3000, async ()=>{
-    try{
-        console.log('Server is running on port 3000');
-        console.log("Mongo URI:", process.env.MONGO_URI);
-    //    await connectDB();
 
-    }
-    catch(err){
-        console.log(err,"error occured while running server");
-    }
-});
 
 
 
@@ -48,7 +38,17 @@ if(process.env.NODE_ENV === "production"){
 
 
 
+app.listen(3000, async ()=>{
+    try{
+        console.log('Server is running on port 3000');
+        console.log("Mongo URI:", process.env.MONGO_URI);
+       await connectDB();
 
+    }
+    catch(err){
+        console.log(err,"error occured while running server");
+    }
+});
 
 
 
