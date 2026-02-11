@@ -6,15 +6,15 @@ import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
 import { connectDB } from "./lib/db.js";
 
-const  __dirname = path.resolve();
 
 dotenv.config();
+const app = express();
+const  __dirname = path.resolve();
 
 const PORT = process.env.PORT || 3000;
 console.log("MONGO_URI:", process.env.MONGO_URI);
 console.log("NODE_ENV:", process.env.NODE_ENV);
 
-const app = express();
 app.use(express.json());
 
 // connectDB();
