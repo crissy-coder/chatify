@@ -66,6 +66,9 @@ export const Signup = async (req, res) => {
 export const Signin = async (req, res) => {
     
     const { email, password } = req.body;
+    if(!email || !password){
+     return res.status(400).json({message: "All fields are required"});
+    }
     try{
       
       console.log("entered in signin try block");
