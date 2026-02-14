@@ -17,21 +17,14 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 
 app.use(express.json());
 
-// connectDB();
-
-
-
-
-
-
 app.use('/api/auth', authRouter);
 app.use('/api/message', messageRouter);
 
 
-if(process.env.NODE_ENV === "production"){
+if(process.env.NODE_ENV === "development"){
     app.use(express.static(path.join(__dirname, "../frontend/build")));
     // if not user try to enter any url other than /api/auth or /api/message it will redirect to index.html of frontend
-    app.get("*", (req, res) => {
+    app.get("*", (_, res) => {
         res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
     });
 }
