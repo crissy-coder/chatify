@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import User from "../model/User.js";
 import { generateToken } from "../lib/utils.js";
+import 'dotenv/config';
+import { sendWelcomeEmail } from "../emails/emailHandler.js";
 
 
 export const Signup = async (req, res) => {
@@ -9,7 +11,7 @@ export const Signup = async (req, res) => {
 
         if (!username || !email || !password) {
             return res.status(400).json({ message: "All required" });
-        }
+        } 
 
         if (password.length < 6) {
             return res.status(400).json({ message: "Min. password length is 6" });
@@ -34,14 +36,25 @@ export const Signup = async (req, res) => {
             password: hashedPassword
         });
 
-        // generateToken(newUser._id, res);
+        
+        const savedUser = await newUser.save();
+        generateToken(newUser._id, res);
 
-        return res.status(201).json({
+
+        res.status(201).json({
             _id: newUser._id,
             username: newUser.username,
             email: newUser.email,
             profilePic: newUser.profilePic
         });
+        try{
+            await sendWelcomeEmail(savedUser.email, savedUser.username, process.env.CLIENT_URL);
+        }
+        catch(err){
+            console.error("Error sending welcome email:", err); 
+            res.status(400).json({message: "User created but failed to send welcome email"});
+        }
+
 
     } catch (error) {
         console.error("Signup error:", error);
