@@ -62,3 +62,36 @@ export const Signup = async (req, res) => {
     }
 };
 
+
+export const Signin = async (req, res) => {
+    
+    const { email, password } = req.body;
+    try{
+      
+      console.log("entered in signin try block");
+      const user = await User.findOne({email});
+      if(!user) return res.status(400).json({message: "Invalid credentials"});
+
+      const isPassCheck = await bcrypt.compare(password,user.password);
+      if(!isPassCheck) return res.status(400).json({message: "Invalid credentials"});
+
+      generateToken(user._id,res);
+
+      res.status(200).json({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        status:"Login successful",
+        profilePic: user.profilePic
+      });
+
+    }catch(err){
+        res.status(500).json({message: "Internal server error", err: err.message});
+    }
+}
+
+export const Signout = async (req, res) => {
+    // res.cookie("jwt", "", {maxage:0, httpOnly:true, secure: process.env.NODE_ENV === "production"});
+    res.cookie("jwt", "", {maxAge:0});
+    res.status(200).json({message: "Signout successful"});
+}
