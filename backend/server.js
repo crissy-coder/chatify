@@ -1,10 +1,11 @@
 // const express = require('express');
 import express from "express";
 import dotenv from "dotenv";
-import path from "path";
+import path, { parse } from "path";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
 import { connectDB } from "./lib/db.js";
+import cookiesParser from "cookie-parser";
 
 
 dotenv.config();
@@ -16,6 +17,7 @@ console.log("MONGO_URI:", process.env.MONGO_URI);
 console.log("NODE_ENV:", process.env.NODE_ENV);
 
 app.use(express.json());
+app.use(cookiesParser());
 
 app.use('/api/auth', authRouter);
 app.use('/api/message', messageRouter);

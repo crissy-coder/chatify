@@ -3,6 +3,7 @@ import User from "../model/User.js";
 import { generateToken } from "../lib/utils.js";
 import 'dotenv/config';
 import { sendWelcomeEmail } from "../emails/emailHandler.js";
+import cloudinary from "../lib/cloudinary.js";
 
 
 export const Signup = async (req, res) => {
@@ -97,4 +98,28 @@ export const Signout = async (req, res) => {
     // res.cookie("jwt", "", {maxage:0, httpOnly:true, secure: process.env.NODE_ENV === "production"});
     res.cookie("jwt", "", {maxAge:0});
     res.status(200).json({message: "Signout successful"});
+}
+
+export const updateProfile = async (req, res) => {
+
+    try {
+    const { profilePic } = req.body;
+    if (!profilePic) return res.status(400).json({ message: "Profile pic is required" });
+
+    const userId = req.user._id; // auth user in protectRoute middleware set req.user
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error in update profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+
 }
