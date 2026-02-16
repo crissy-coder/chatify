@@ -108,8 +108,10 @@ export const updateProfile = async (req, res) => {
 
     const userId = req.user._id; // auth user in protectRoute middleware set req.user
 
+    //uploading profile pic to cloudinary
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
 
+    //updating user profile pic in database
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePic: uploadResponse.secure_url },

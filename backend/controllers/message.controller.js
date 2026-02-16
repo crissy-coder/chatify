@@ -5,7 +5,7 @@ export const getAllContacts = async (req, res) => {
      try{
          console.log("getAllContacts called");
         const loggedInUser = req.user._id;
-        const filteredUsers = await User.find({_id: {$ne: loggedInUser} }).select("-password");
+        const filteredUsers = await User.find({_id: {$ne: loggedInUser} }).select("-password"); //$ne = not equal to, select("-password") = exclude password field
         res.status(200).json(filteredUsers);
      }catch(error){
         console.log("error in getAllContacts:", error);
@@ -37,9 +37,9 @@ export const  getMessageByUserId = async (req,res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
-    const { id: receiverId } = req.params;
-    const senderId = req.user._id;
+    const { text, image } = req.body; // text and image from request body
+    const { id: receiverId } = req.params; // {id: receiverId} = getting id from url /param
+    const senderId = req.user._id; // auth user from middelware = protectRoute
 
    //  checking is empt
     if (!text && !image) {
@@ -51,9 +51,9 @@ export const sendMessage = async (req, res) => {
       return res.status(400).json({ message: "Cannot send messages to yourself." });
     }
    //  const receiverExists = await User.exists({ _id: receiverId });
-   //  if (!receiverExists) {
-   //    return res.status(404).json({ message: "Receiver not found." });
-   //  }
+    if (!receiverExists) {
+      return res.status(404).json({ message: "Receiver not found." });
+    }
 
    // uploading image to cloudinary
     let imageUrl;
@@ -106,7 +106,24 @@ export const getChatPartner = async (req,res) => {
          : msg.senderId.toString())),
       ];
 
-      const chatPartners = await User.find({_id: {$in: chatPartnerIds}}).select("-password");
+      const chatPartners = await User.find({_id: {$in: chatPartnerIds}}).select("-password"); 
+     
+      // $in = "Match any value from this array"
+      // const chatPartnerIds = [ "101",  "103",   "105"];
+      // in our database         
+      //[
+         //   { "_id": "101", "name": "Rahul" },
+         //   { "_id": "102", "name": "Vikas" },
+         //   { "_id": "103", "name": "Arjun" },
+         //   { "_id": "104", "name": "Kiran" }
+         // ]
+         // by User.find({ _id: { $in: chatPartnerIds } })
+         // we will get 
+         //[
+         //   { "_id": "101", "name": "Rahul" },
+         //   { "_id": "103", "name": "Arjun" }
+         // ]
+         // here "Only matching IDs are returned
 
       res.status(200).json(chatPartners);
 
