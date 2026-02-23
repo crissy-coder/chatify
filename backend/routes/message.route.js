@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 import { getAllContacts,getMessageByUserId,sendMessage ,getChatPartner } from "../controllers/message.controller.js";
 import { protectRoute } from "../lib/middelware/auth.middelware.js";
-import { arcjetProtection } from "../lib/middelware/arcjet.middelware.js";
+import { arcjetProtection } from "../lib/middelware/arcject.middelware.js";
 
 router.use(arcjetProtection, protectRoute);
 router.get('/contacts',  getAllContacts);

@@ -71,8 +71,6 @@ export const Signin = async (req, res) => {
      return res.status(400).json({message: "All fields are required"});
     }
     try{
-      
-      console.log("entered in signin try block");
       const user = await User.findOne({email});
       if(!user) return res.status(400).json({message: "Invalid credentials"});
 
