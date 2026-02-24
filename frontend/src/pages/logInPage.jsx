@@ -2,13 +2,10 @@ import React from 'react'
 import { useUserAuthStore } from '../store/userAuthStore';
 
 function LogInPage() {
-
-  const {authuser, login, isLoggingIn} = useUserAuthStore();
-
-
+    // const {authuser, isCheckingAuth, checkAuth} = useUserAuthStore();
   return (
     <div>
-      <button onClick={login} className='z-10'>Login</button>
+      Login page
     </div>
   )
 }

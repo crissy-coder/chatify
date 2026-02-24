@@ -2,8 +2,8 @@ import React from 'react'
 import { useUserAuthStore } from '../store/userAuthStore';
 
 function ChatPage() {
-        const {authuser, login, isLoggingIn} = useUserAuthStore();
-  return (
+    // const {authuser, isCheckingAuth, checkAuth} = useUserAuthStore();
+    return (
     <div>
       chatpage
     </div>
