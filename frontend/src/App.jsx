@@ -2,7 +2,7 @@ import {Navigate, Route,Routes} from 'react-router';
 import ChatPage from './pages/chatPage';
 import LogInPage from './pages/logInPage';
 import SingUpPage from './pages/singUpPage';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import { useUserAuthStore } from './store/userAuthStore';
 import PageLoader from './components/pageLoader';
 import {Toaster} from 'react-hot-toast';
@@ -26,9 +26,13 @@ function App() {
          <div className="absolute top-0 -left-4 size-96 bg-pink-500 opacity-20 blur-[100px]" />
          <div className="absolute bottom-0 -right-4 size-96 bg-cyan-500 opacity-20 blur-[100px]" />
         <Routes>
-            <Route path="/" element={ authuser ? <ChatPage /> : <Navigate to={"/login"} /> } />
-            <Route path="/login" element={!authuser ? <LogInPage /> : <Navigate to={"/"} /> } />
+            <Route path="/" element={authuser ? <ChatPage /> : <Navigate to={"/signin"} /> } />
+            <Route path="/signin" element={!authuser ? <LogInPage /> : <Navigate to={"/"} /> } />
             <Route path="/signup" element={!authuser ? <SingUpPage /> : <Navigate to={"/"} /> } />
+
+             {/* <Route path="/" element={<ChatPage />} />
+            <Route path="/signin" element={<LogInPage />} />
+             <Route path="/signup" element={<SingUpPage />} /> */}
         </Routes>
         <Toaster/>
 

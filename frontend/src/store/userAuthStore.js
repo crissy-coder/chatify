@@ -1,55 +1,105 @@
-import { create  } from "zustand";
-import {axiosInstance} from "../lib/axios.js";
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
-export const useUserAuthStore = create((set) => ({
-    // authuser : {name:"Vikas", _id: 342, age:25},
-    // isLoggingIn : false,
-    // idsLoading : false,
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
 
-    // login: () => {
-    //     set({isLoggingIn : true});
-    // }
+export const useUserAuthStore = create((set, get) => ({
+  authUser: null,
+  isCheckingAuth: true,
+  isSigningUp: false,
+  isLoggingIn: false,
+  socket: null,
+  onlineUsers: [],
 
-    authUser: null,
-    isCheckingAuth: true, // this will check  on load whether user is authenticated or not
-    isSigningUp: false,
-
-
-
-
-    checkAuth: async () => {
-        try{
-        const res = await axiosInstance.get("/auth/check");
-        set({authUser:res.data}) // res.data is user object from backend
-        }catch(err){
-            console.error("Error checking auth:", err);
-            set({authUser: null});
-        }finally {
-            set({isCheckingAuth: false}); // we success of fail - eventually ischeckingAuth should be false 
-        }
-    },
-
-    signup : async (data) => {
-        set({isSigningUp: true})
-        try{
-            const res = await axiosInstance.post("/auth/signup", data); // data is {fullName, email, password} and send to backend to our api route /auth/signup
-            set({authUser: res.data}); // res.data is user object from backend after successful signup which which are assign to "authUser"
-            
-            toast.success("Signup successful!"); // show success toast after successful signup
-      
-        }catch(err){
-            // "err.response.data.message" error the way we show error  in axios 
-            toast.error(err.response?.data?.message || "Signup failed!"); // show error toast if signup fails, and show error message from backend if available
-            console.error("Error during signup:", err);
-        }finally {
-            set({isSigningUp: false});
-        }
+  checkAuth: async () => {
+    try {
+      const res = await axiosInstance.get("/auth/check");
+      set({ authUser: res.data });
+    //   get().connectSocket();
+    } catch (error) {
+      console.log("Error in authCheck:", error);
+      set({ authUser: null });
+    } finally {
+      set({ isCheckingAuth: false });
     }
+  },
 
+  signup: async (data) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await axiosInstance.post("/auth/signup", data);
+      set({ authUser: res.data });
 
+      toast.success("Account created successfully!");
+    //   get().connectSocket();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
 
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/signin", data);
+      set({ authUser: res.data });
 
+      toast.success("Logged in successfully");
 
+    //   get().connectSocket();
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.log("Login error:", error);
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
 
+  logout: async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ authUser: null });
+      toast.success("Logged out successfully");
+    //   get().disconnectSocket();
+    } catch (error) {
+      toast.error("Error logging out");
+      console.log("Logout error:", error);
+    }
+  },
+
+  updateProfile: async (data) => {
+    try {
+      const res = await axiosInstance.put("/auth/update_profile", data); 
+      console.log("Profile update response:", res);
+      set({ authUser: res.data });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.log("Error in update profile:", error);
+      toast.error(error.response.data.message);
+    }
+  },
+
+//   connectSocket: () => {
+//     const { authUser } = get();
+//     if (!authUser || get().socket?.connected) return;
+
+//     const socket = io(BASE_URL, {
+//       withCredentials: true, // this ensures cookies are sent with the connection
+//     });
+
+//     socket.connect();
+
+//     set({ socket });
+
+//     // listen for online users event
+//     socket.on("getOnlineUsers", (userIds) => {
+//       set({ onlineUsers: userIds });
+//     });
+//   },
+
+//   disconnectSocket: () => {
+//     if (get().socket?.connected) get().socket.disconnect();
+//   },
 }));
