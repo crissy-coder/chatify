@@ -8,11 +8,13 @@ function ChatsList() {
   const { getMyChatPartners, chats, isUsersLoading, setSelectedUser } = useChatStore();
   const { onlineUsers } = useUserAuthStore();
 
+ useEffect(() => {
+  getMyChatPartners().then(() => {
+    console.log("Chats after fetch:", useChatStore.getState().chats);
+  });
+}, []);
 
-//   useEffect() ?
-  useEffect(() => {
-    getMyChatPartners();
-  }, [getMyChatPartners]);
+  console.log(chats, "Chats List");
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
   if (chats.length === 0) return <NoChatsFound />;
@@ -26,16 +28,24 @@ function ChatsList() {
           onClick={() => setSelectedUser(chat)}
         >
           <div className="flex items-center gap-3">
-            <div className={`avatar ${onlineUsers.includes(chat._id) ? "online" : "offline"}`}>
+            <div
+              className={`avatar ${
+                onlineUsers.includes(chat._id) ? "online" : "offline"
+              }`}
+            >
               <div className="size-12 rounded-full">
-                <img src={chat.profilePic || "/avatar.png"} alt={chat.fullName} />
+                {/* <img src={chat.profilePic || "/avatar.png"} alt={chat.username} /> */}
               </div>
             </div>
-            <h4 className="text-slate-200 font-medium truncate">{chat.fullName}</h4>
+
+            <h4 className="text-slate-200 font-medium truncate">
+              {chat.username}
+            </h4>
           </div>
         </div>
       ))}
     </>
   );
 }
+
 export default ChatsList;

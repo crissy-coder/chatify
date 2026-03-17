@@ -90,7 +90,7 @@ function SingUpPage() {
                 </form>
 
                 <div className="mt-6 text-center">
-                  <Link to="/login" className="auth-link">
+                  <Link to="/signin" className="auth-link">
                     Already have an account? Login
                   </Link>
                 </div>
